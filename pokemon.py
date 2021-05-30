@@ -128,19 +128,11 @@ class KNN():
                 print('the correct answer is legend')
         return result
 
-    def qm_safari(self,k,dataX,dataT,dataX_train,dataT_train):
-        name=input("Please enter the Pokemon you want to predict:")
-        for i in range(len(data_name)):
-            if data_name[i]==name:
-                distance=KNN.euclidean_distance(dataX_train,dataX[i,:])
-                result=(KNN.vote(distance,k,dataT_train))
-                print('The prediction type of',i,data_name[i],":",result)
-                if dataT[i]==0 and result=='not_legend':
-                    print("The prediction is correct!")
-                elif dataT[i]==1 and result=='legend':
-                    print("The prediction is correct!")
-                else:
-                    print("The prediction is wrong!")
+    # def qm_safari(self,k,dataX,dataT,dataX_train,dataT_train):
+    #     name=input("Please enter the Pokemon you want to predict:")
+    #     for i in range(len(data_name)):
+    #         if data_name[i]==name:
+    #             KNN.KNN_classfier(i,dataX_train, dataX[i,:].reshape(1,7), dataT_train, dataT,k)
 
 
 
@@ -157,7 +149,7 @@ a=np.random.randint(np.shape(dataX_test)[0])
 result=KNN.KNN_classfier(a,dataX_train, dataX_test[a,:].reshape(1,7), dataT_train, dataT_test,k)
 a=np.random.randint(np.shape(dataX_test)[0])
 result=KNN.KNN_classfier(a,dataX_train, dataX_test[a,:].reshape(1,7), dataT_train, dataT_test,k)
-KNN.qm_safari(k,dataX,dataT,dataX_train,dataT_train)
+# KNN.qm_safari(k,dataX,dataT,dataX_train,dataT_train)
 
 #visualize
 x=np.linspace(1, 10,10)
