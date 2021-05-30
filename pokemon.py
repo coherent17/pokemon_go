@@ -1,3 +1,4 @@
+from io import StringIO
 import numpy as np
 import matplotlib.pyplot as plt
 np.set_printoptions(threshold=np.inf)
@@ -127,6 +128,16 @@ class KNN():
                 print('the correct answer is legend\n')
         return result
 
+    def qm_safari(self):
+        name=input("Please enter the Pokemon you want to predict:")
+        for i in range(len(data_name)):
+            if data_name[i]==name:
+                distance=KNN.euclidean_distance(dataX_train, dataX[i,:])
+                result=(KNN.vote(distance,k,dataT_train))
+                print('The prediction type of',i,data_name[i],":",result)
+
+
+
 KNN=KNN()
 dataX,dataT,data_name=KNN.data_preprocessing()
 dataX_train,dataX_test,dataT_train,dataT_test=KNN.train_test_split(dataX, dataT)
@@ -134,11 +145,8 @@ dataX_train=KNN.normalize(dataX_train)
 dataX_test=KNN.normalize(dataX_test)
 accuracy_store,k=KNN.KNN_score(dataX_train, dataX_test, dataT_train, dataT_test)
 a=np.random.randint(np.shape(dataX_test)[0])
-result=KNN.KNN_classfier(a,dataX_train, dataX_test[a,:].reshape(1,7), dataT_train, dataT_test,k)
-a=np.random.randint(np.shape(dataX_test)[0])
-result=KNN.KNN_classfier(a,dataX_train, dataX_test[a,:].reshape(1,7), dataT_train, dataT_test,k)
-a=np.random.randint(np.shape(dataX_test)[0])
-result=KNN.KNN_classfier(a,dataX_train, dataX_test[a,:].reshape(1,7), dataT_train, dataT_test,k)
+result=KNN.KNN_classfier(a,dataX_train, dataX[a,:].reshape(1,7), dataT_train, dataT_test,k)
+KNN.qm_safari()
 
 #visualize
 x=np.linspace(1, 10,10)
