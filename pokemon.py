@@ -1,4 +1,3 @@
-from io import StringIO
 import numpy as np
 import matplotlib.pyplot as plt
 np.set_printoptions(threshold=np.inf)
@@ -55,20 +54,23 @@ class KNN():
         return X_n
 
     def train_test_split(self,dataX,dataT):
-        dataX_train=dataX[0:750,:] #(750,7))
-        dataX_test=dataX[750:,:] #(322,7)
-        dataT_train=dataT[0:750].reshape(750,1) #(750,1)
-        dataT_test=dataT[750:].reshape(322,1) #(322,1)
-        return dataX_train,dataX_test,dataT_train,dataT_test
+        dataX_train=dataX[0:643,:] #(643,7)
+        dataX_valid=dataX[643:857,:] #(214,7)
+        dataX_test=dataX[857:,:] #(215,7)
+        
+        dataT_train=dataT[0:643].reshape(643,1) #(643,1)
+        dataT_valid=dataT[643:857].reshape(214,1) #(214,1)
+        dataT_test=dataT[857:].reshape(215,1) #(215,1)
+        return dataX_train,dataX_valid,dataX_test,dataT_train,dataT_valid,dataT_test
 
-    def KNN_score(self,dataX_train,dataX_test,dataT_train,dataT_test):
+    def KNN_score(self,dataX_train,dataX_valid,dataT_train,dataT_valid):
         accuracy_store=[] #store the accuracy of different K from 1 ~ 10
         for j in range(1,11): #change the value of K
             result=[]
-            for i in range(np.shape(dataX_test)[0]): #change the row of the testing data
-                distance=KNN.euclidean_distance(dataX_train, dataX_test[i,:])
+            for i in range(np.shape(dataX_valid)[0]): #change the row of the testing data
+                distance=KNN.euclidean_distance(dataX_train, dataX_valid[i,:])
                 result.append(KNN.vote(distance,j,dataT_train))
-            accuracy_store.append(KNN.accuracy(result, dataT_test))
+            accuracy_store.append(KNN.accuracy(result, dataT_valid))
         k=np.argsort(accuracy_store)[-1] #the K value corresponding to the highest accuracy
         print('the maximum accuracy happen at K= %d is' %(k) ,accuracy_store[k])
         print(accuracy_store)
@@ -103,12 +105,12 @@ class KNN():
             result='legend'
         return result
 
-    def accuracy(self,result,dataT_test):
+    def accuracy(self,result,dataT_valid):
         flag=0
         for i in range(len(result)):
-            if result[i]=='not_legend' and dataT_test[i]==0:
+            if result[i]=='not_legend' and dataT_valid[i]==0:
                 flag+=1
-            elif result[i]=='legend' and dataT_test[i]==1:
+            elif result[i]=='legend' and dataT_valid[i]==1:
                 flag+=1
         return flag/len(result)
     
@@ -139,10 +141,11 @@ class KNN():
 
 KNN=KNN()
 dataX,dataT,data_name=KNN.data_preprocessing()
-dataX_train,dataX_test,dataT_train,dataT_test=KNN.train_test_split(dataX, dataT)
+dataX_train,dataX_valid,dataX_test,dataT_train,dataT_valid,dataT_test=KNN.train_test_split(dataX, dataT)
 dataX_train=KNN.normalize(dataX_train)
+dataX_valid=KNN.normalize(dataX_valid)
 dataX_test=KNN.normalize(dataX_test)
-accuracy_store,k=KNN.KNN_score(dataX_train, dataX_test, dataT_train, dataT_test)
+accuracy_store,k=KNN.KNN_score(dataX_train, dataX_valid, dataT_train, dataT_valid)
 a=np.random.randint(np.shape(dataX_test)[0])
 result=KNN.KNN_classfier(a,dataX_train, dataX_test[a,:].reshape(1,7), dataT_train, dataT_test,k)
 a=np.random.randint(np.shape(dataX_test)[0])
@@ -151,7 +154,8 @@ a=np.random.randint(np.shape(dataX_test)[0])
 result=KNN.KNN_classfier(a,dataX_train, dataX_test[a,:].reshape(1,7), dataT_train, dataT_test,k)
 # KNN.qm_safari(k,dataX,dataT,dataX_train,dataT_train)
 
-#visualize
+
+# visualize
 x=np.linspace(1, 10,10)
 plt.plot(x,accuracy_store)
 plt.xlabel('K')
