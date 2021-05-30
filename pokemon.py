@@ -13,7 +13,7 @@ class KNN():
         #delete the title of the dataset
         DATA=np.delete(data_org,[0],axis=0)
 
-        #shuffle the data to avoid the strange distribution
+        #shuffle the data to avoid the strange
         np.random.shuffle(DATA)
         
 
@@ -114,7 +114,7 @@ class KNN():
     def KNN_classfier(self,index,dataX_train,dataX_test,dataT_train,dataT_test,k): #use the highest k to classfier the data
         distance=KNN.euclidean_distance(dataX_train, dataX_test[0,:])
         result=(KNN.vote(distance,k,dataT_train))
-        print(a,': the prediction type: '+result)
+        print(a,data_name[a],': the prediction type: '+result)
         if result=='not_legend' and dataT_test[index]==0:
             print('the prediction is correct!')
         elif result=='legend' and dataT_test[index]==1:
