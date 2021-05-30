@@ -5,31 +5,38 @@ np.set_printoptions(threshold=np.inf)
 class KNN():
     def __init__(self):
         pass
-
+ 
     def data_preprocessing(self):
         #DATA is the list that store the whole dataset
-        DATA=np.genfromtxt("Pokemon.csv",delimiter=',',encoding="utf-8",dtype=str)
+        data_org=np.genfromtxt("Pokemon.csv",delimiter=',',encoding="utf-8",dtype=str)
+
+        #delete the title of the dataset
+        DATA=np.delete(data_org,[0],axis=0)
+
+        #shuffle the data to avoid the strange distribution
+        np.random.shuffle(DATA)
+        
 
         #read feature data as the float
-        dataX=np.zeros((DATA.shape[0]-1,DATA.shape[1]-5),dtype=float)
-        for i in range(DATA.shape[0]-1):
-            for j in range(DATA.shape[1]-5):
-                dataX[i,j]=float(DATA[i+1,j+4])
+        dataX=np.zeros((DATA.shape[0],7),dtype=float)
+        for i in range(DATA.shape[0]):
+            for j in range(7):
+                dataX[i,j]=float(DATA[i,j+4])
 
-        #print(dataX.shape)  (1072, 7)
+        #print(dataX.shape)  #(1072, 7)
     
         #read the target data and convert true as 1 false as 0
-        dataT=np.zeros(len(DATA)-1,dtype=float)
-        for i in range(len(DATA)-1):
-            if DATA[i+1,-1]=='FALSE':
+        dataT=np.zeros(len(DATA),dtype=float)
+        for i in range(len(DATA)):
+            if DATA[i,-1]=='FALSE':
                 dataT[i]='0'
             else:
                 dataT[i]='1'
-
+        #print(dataT.shape) #(1072,)
         #read the name of the pokemon and store in the data_name[]
         data_name=[]
-        for i in range(len(DATA)-1):
-           data_name.append(DATA[i+1,1])
+        for i in range(len(DATA)):
+           data_name.append(DATA[i,1])
 
         #print(len(data_name))  #1072
         return dataX,dataT,data_name 
