@@ -114,17 +114,17 @@ class KNN():
     def KNN_classfier(self,index,dataX_train,dataX_test,dataT_train,dataT_test,k): #use the highest k to classfier the data
         distance=KNN.euclidean_distance(dataX_train, dataX_test[0,:])
         result=(KNN.vote(distance,k,dataT_train))
-        print(a,data_name[a],': the prediction type: '+result)
+        print('The prediction type of',a,data_name[a],":",result)
         if result=='not_legend' and dataT_test[index]==0:
-            print('the prediction is correct!')
+            print('The prediction is correct!\n')
         elif result=='legend' and dataT_test[index]==1:
-            print('the prediction is correct!')
+            print('The prediction is correct!\n')
         else:
-            print('the prediction is wrong!')
+            print('The prediction is wrong!\n')
             if dataT_test[index]==0:
-                print('the correct answer is not_legend')
+                print('the correct answer is not_legend\n')
             elif dataT_test[index]==1:
-                print('the correct answer is legend')
+                print('the correct answer is legend\n')
         return result
 
 KNN=KNN()
