@@ -1,7 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from numpy.core.fromnumeric import mean
-from numpy.core.numeric import normalize_axis_tuple
 np.set_printoptions(threshold=np.inf)
 
 class KNN():
