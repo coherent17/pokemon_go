@@ -41,17 +41,32 @@ class KNN():
         #print(len(data_name))  #1072
         return dataX,dataT,data_name 
 
-    def normalize(self,X):
-        mean_X=[]
-        std_X=[]
-        for i in range(X.shape[1]):
-            mean_X.append(np.mean(X[:,i]))
-            std_X.append(np.std(X[:,i]))
-        X_n=np.zeros(np.shape(X))
-        for i in range(X.shape[0]):
-            for j in range(X.shape[1]):
-                X_n[i,j]=(X[i,j]-mean_X[j])/std_X[j]
-        return X_n
+    def normalize(self,X_train,X_valid,X_test):
+        mean_X_train=[]
+        std_X_train=[]
+        for i in range(X_train.shape[1]):
+            mean_X_train.append(np.mean(X_train[:,i]))
+            std_X_train.append(np.std(X_train[:,i]))
+        
+        #normalize training data
+        X_a=np.zeros(np.shape(X_train))
+        for i in range(X_train.shape[0]):
+            for j in range(X_train.shape[1]):
+                X_a[i,j]=(X_train[i,j]-mean_X_train[j])/std_X_train[j]
+
+        #normalize the validation data
+        X_b=np.zeros(np.shape(X_valid))
+        for i in range(X_valid.shape[0]):
+            for j in range(X_valid.shape[1]):
+                X_b[i,j]=(X_valid[i,j]-mean_X_train[j])/std_X_train[j]
+
+        #normalize the testing data
+        X_c=np.zeros(np.shape(X_test))
+        for i in range(X_test.shape[0]):
+            for j in range(X_test.shape[1]):
+                X_c[i,j]=(X_test[i,j]-mean_X_train[j])/std_X_train[j]
+
+        return X_a,X_b,X_c
 
     def train_test_split(self,dataX,dataT):
         dataX_train=dataX[0:643,:] #(643,7)
@@ -131,6 +146,8 @@ class KNN():
         return result
 
     def qm_value_calculater(self,dataX,data_name):
+        #formula:
+        #qm_i=((hp_i+a)/max(hp))*((attack_i+b)/max(attack))**2*sqrt((defense_i+c)/max(defense)*(speed_i+d)/max(apeed))
         #parameter
         max_hp=np.max(dataX[:,1])
         max_attack=np.max(dataX[:,2])
@@ -164,9 +181,7 @@ class KNN():
 KNN=KNN()
 dataX,dataT,data_name=KNN.data_preprocessing()
 dataX_train,dataX_valid,dataX_test,dataT_train,dataT_valid,dataT_test=KNN.train_test_split(dataX, dataT)
-dataX_train=KNN.normalize(dataX_train)
-dataX_valid=KNN.normalize(dataX_valid)
-dataX_test=KNN.normalize(dataX_test)
+dataX_train,dataX_valid,dataX_test=KNN.normalize(dataX_train,dataX_valid,dataX_test)
 accuracy_store,k=KNN.KNN_score(dataX_train, dataX_valid, dataT_train, dataT_valid)
 a=np.random.randint(np.shape(dataX_test)[0])
 result=KNN.KNN_classfier(a,dataX_train, dataX_test[a,:].reshape(1,7), dataT_train, dataT_test,k)
