@@ -92,12 +92,12 @@ class KNN():
         return accuracy_store,k
 
     #per row of the testing data return a list of the euclidean distance
-    def euclidean_distance(self,X_train,X_test):
+    def euclidean_distance(self,X_train,X):
         distance=[]
         for i in range(np.shape(X_train)[0]):
             dis=0
             for j in range(np.shape(X_train)[1]):
-                dis+=(X_train[i,j]-X_test[j])**2
+                dis+=(X_train[i,j]-X[j])**2
             distance.append(np.sqrt(dis))
         return distance
 
@@ -132,7 +132,7 @@ class KNN():
     def KNN_classfier(self,index,dataX_train,dataX_test,dataT_train,dataT_test,k): #use the highest k to classfier the data
         distance=KNN.euclidean_distance(dataX_train, dataX_test[0,:])
         result=(KNN.vote(distance,k,dataT_train))
-        print('The prediction type of',a,data_name[a],":",result)
+        print('The prediction type of',data_name[a],":",result)
         if result=='not_legend' and dataT_test[index]==0:
             print('The prediction is correct!')
         elif result=='legend' and dataT_test[index]==1:
