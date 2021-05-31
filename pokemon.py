@@ -130,6 +130,28 @@ class KNN():
                 print('the correct answer is legend')
         return result
 
+    def qm_value_calculater(self,dataX,data_name):
+        #parameter
+        max_hp=np.max(dataX[:,1])
+        max_attack=np.max(dataX[:,2])
+        max_defense=np.max(dataX[:,3])
+        max_speed=np.max(dataX[:,6])
+        #some noise
+        a=np.random.randint(-3,3)
+        b=np.random.randint(-3,3)
+        c=np.random.randint(-3,3)
+        d=np.random.randint(-3,3)
+        qm_value_store=[]
+        for j in data_name:
+            for i in range(len(data_name)):
+                if data_name[i]==j:
+                    qm_value=((dataX[i,1]+a)/max_hp)*(((dataX[i,2]+b)/max_attack)**2)*(((dataX[i,3]+c)/max_defense)*((dataX[i,6]+d)/max_speed))**(1/2)
+                    qm_value_store.append(qm_value)
+        qm_max=np.max(qm_value_store)
+        for i in range(len(qm_value_store)):
+            qm_value_store[i]=(qm_value_store[i]/qm_max)*100
+        return qm_value_store
+
     # def qm_safari(self,k,dataX,dataT,dataX_train,dataT_train):
     #     name=input("Please enter the Pokemon you want to predict:")
     #     for i in range(len(data_name)):
@@ -153,7 +175,7 @@ result=KNN.KNN_classfier(a,dataX_train, dataX_test[a,:].reshape(1,7), dataT_trai
 a=np.random.randint(np.shape(dataX_test)[0])
 result=KNN.KNN_classfier(a,dataX_train, dataX_test[a,:].reshape(1,7), dataT_train, dataT_test,k)
 # KNN.qm_safari(k,dataX,dataT,dataX_train,dataT_train)
-
+qm_value_store=KNN.qm_value_calculater(dataX,data_name)
 
 # visualize
 x=np.linspace(1, 10,10)
