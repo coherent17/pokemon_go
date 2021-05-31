@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from numpy.core.fromnumeric import mean
+from numpy.core.numeric import normalize_axis_tuple
 np.set_printoptions(threshold=np.inf)
 
 class KNN():
@@ -40,7 +42,7 @@ class KNN():
 
         #print(len(data_name))  #1072
         return dataX,dataT,data_name 
-
+    
     def normalize(self,X_train,X_valid,X_test):
         mean_X_train=[]
         std_X_train=[]
@@ -66,7 +68,14 @@ class KNN():
             for j in range(X_test.shape[1]):
                 X_c[i,j]=(X_test[i,j]-mean_X_train[j])/std_X_train[j]
 
-        return X_a,X_b,X_c
+        return X_a,X_b,X_c,mean_X_train,std_X_train
+
+    def normalize_small(self,train_mean,train_std,X):
+        X_a=np.zeros(np.shape(X))
+        for i in range(X.shape[0]):
+            for j in range(X.shape[1]):
+                X_a[i,j]=(X[i,j]-train_mean[j])/train_std[j]
+        return X_a
 
     def train_test_split(self,dataX,dataT):
         dataX_train=dataX[0:643,:] #(643,7)
@@ -107,10 +116,10 @@ class KNN():
         for i in range(k):
             ind.append(ind_sort[i])
         flag=[0,0] #not_legend,legend
-        for i in dataT_train[ind]:
-            if i==0: # not_legend
+        for i in ind:
+            if dataT_train[i]==0: # not_legend
                 flag[0]+=1
-            elif i==1: #legend
+            elif dataT_train[i]==1: #legend
                 flag[1]+=1 
         big=np.max(flag)
         result=[]
@@ -169,19 +178,28 @@ class KNN():
             qm_value_store[i]=(qm_value_store[i]/qm_max)*100
         return qm_value_store
 
-    # def qm_safari(self,k,dataX,dataT,dataX_train,dataT_train):
-    #     name=input("Please enter the Pokemon you want to predict:")
-    #     for i in range(len(data_name)):
-    #         if data_name[i]==name:
-    #             KNN.KNN_classfier(i,dataX_train, dataX[i,:].reshape(1,7), dataT_train, dataT,k)
-
-
+    def qm_safari(self,k,data_name,dataX,dataT,dataX_train,dataT_train):
+        name=input("Please enter the Pokemon you want to predict:")
+        for i in range(len(data_name)):
+            if data_name[i]==name:
+                #remember to normalize first:
+                dataX_nor=KNN.normalize_small(train_mean,train_std,dataX[i,:].reshape(7,1))
+                distance=KNN.euclidean_distance(dataX_train, dataX_nor)
+                result=(KNN.vote(distance,k,dataT_train))
+                print('The prediction type of',data_name[i],":",result)
+                if result=='not_legend' and dataT[i]==0:
+                    print('The prediction is correct!')
+                elif result=='legend' and dataT[i]==1:
+                    print('The prediction is correct!')
+                else:
+                    print('The prediction is wrong!')
+                
 
 
 KNN=KNN()
 dataX,dataT,data_name=KNN.data_preprocessing()
 dataX_train,dataX_valid,dataX_test,dataT_train,dataT_valid,dataT_test=KNN.train_test_split(dataX, dataT)
-dataX_train,dataX_valid,dataX_test=KNN.normalize(dataX_train,dataX_valid,dataX_test)
+dataX_train,dataX_valid,dataX_test,train_mean,train_std=KNN.normalize(dataX_train,dataX_valid,dataX_test)
 accuracy_store,k=KNN.KNN_score(dataX_train, dataX_valid, dataT_train, dataT_valid)
 a=np.random.randint(np.shape(dataX_test)[0])
 result=KNN.KNN_classfier(a,dataX_train, dataX_test[a,:].reshape(1,7), dataT_train, dataT_test,k)
@@ -189,7 +207,7 @@ a=np.random.randint(np.shape(dataX_test)[0])
 result=KNN.KNN_classfier(a,dataX_train, dataX_test[a,:].reshape(1,7), dataT_train, dataT_test,k)
 a=np.random.randint(np.shape(dataX_test)[0])
 result=KNN.KNN_classfier(a,dataX_train, dataX_test[a,:].reshape(1,7), dataT_train, dataT_test,k)
-# KNN.qm_safari(k,dataX,dataT,dataX_train,dataT_train)
+KNN.qm_safari(k,data_name,dataX,dataT,dataX_train,dataT_train)
 qm_value_store=KNN.qm_value_calculater(dataX,data_name)
 
 # visualize
